@@ -1,0 +1,11 @@
+version: '3'
+
+includes:
+  infra: ./infrastructure
+  cluster: ./clusters/Taskfile.yml
+  # support: ./support-services
+tasks:
+  update:
+    cmds:
+      - task: infra:all
+      - task: cluster:all

@@ -1,0 +1,23 @@
+version: '3'
+
+tasks:
+  init:
+    dir: support-services
+    cmds:
+      - terraform init
+    silent: true
+
+  update:
+    dir: support-services
+    cmds:
+      - mkdir -p .tmp
+      - terraform output --state=../infrastructure/terraform.tfstate -json | jq 'map_values(.value)' > .tmp/output.json
+      - terraform apply -var-file=.tmp/output.json
+    silent: true
+
+  destroy:
+    dir: support-services
+    cmds:
+      - terraform output --state=../infrastructure/terraform.tfstate -json | jq 'map_values(.value)' > .tmp/output.json
+      - terraform destroy -var-file=.tmp/output.json
+    silent: true

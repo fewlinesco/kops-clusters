@@ -1,0 +1,229 @@
+argocdUrl: http://localhost:8080
+
+templates:
+  - name: platform-sync-degraded
+    title: Service {{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}} health has degraded
+    body: |
+      :fire: Service *{{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}}* health has degraded
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#FA7F24",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+            },
+            {
+            "title": "Time",
+            "value": "{{.app.status.operationState.finishedAt}}",
+            "short": true
+          }, {
+            "title": "Domain",
+            "value": "{{index .app.metadata.labels "fewlines/topology-domain"}}",
+            "short": true
+          }, {
+            "title": "Cluster",
+            "value": "{{index .app.metadata.labels "fewlines/topology-cluster"}}",
+            "short": true
+          }, {
+            "title": "Environment",
+            "value": "{{index .app.metadata.labels "fewlines/topology-environment"}}",
+            "short": true
+          }, {
+            "title": "Namespace",
+            "value": "{{index .app.metadata.labels "fewlines/topology-namespace"}}",
+            "short": true
+          }
+          ]
+        }]
+
+  - name: platform-sync-failed
+    title: Service {{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}} sync has failed
+    body: |
+      :boom: Service *{{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}}* sync has failed
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#FF0000",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+            },
+            {
+            "title": "Time",
+            "value": "{{.app.status.operationState.finishedAt}}",
+            "short": true
+          }, {
+            "title": "Domain",
+            "value": "{{index .app.metadata.labels "fewlines/topology-domain"}}",
+            "short": true
+          }, {
+            "title": "Cluster",
+            "value": "{{index .app.metadata.labels "fewlines/topology-cluster"}}",
+            "short": true
+          }, {
+            "title": "Environment",
+            "value": "{{index .app.metadata.labels "fewlines/topology-environment"}}",
+            "short": true
+          }, {
+            "title": "Namespace",
+            "value": "{{index .app.metadata.labels "fewlines/topology-namespace"}}",
+            "short": true
+          }, {
+            "title": "Error",
+            "value": "{{.app.status.operationState.message}}",
+            "short": false
+          }
+          ]
+        }]
+
+  - name: platform-sync-succeeded
+    title: Service {{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}} successfully synced
+    body: |
+      :rocket: Service *{{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}}* successfully synced
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#29A645",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+            },
+            {
+            "title": "Time",
+            "value": "{{.app.status.operationState.finishedAt}}",
+            "short": true
+          }, {
+            "title": "Domain",
+            "value": "{{index .app.metadata.labels "fewlines/topology-domain"}}",
+            "short": true
+          }, {
+            "title": "Cluster",
+            "value": "{{index .app.metadata.labels "fewlines/topology-cluster"}}",
+            "short": true
+          }, {
+            "title": "Environment",
+            "value": "{{index .app.metadata.labels "fewlines/topology-environment"}}",
+            "short": true
+          }, {
+            "title": "Namespace",
+            "value": "{{index .app.metadata.labels "fewlines/topology-namespace"}}",
+            "short": true
+          }
+          ]
+        }]
+
+  - name: platform-sync-running
+    title: Service {{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}} sync has started
+    body: |
+      :fingers_crossed: Service *{{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}}* sync has started
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#286FFA",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+            },
+            {
+            "title": "Time",
+            "value": "{{.app.status.operationState.finishedAt}}",
+            "short": true
+          }, {
+            "title": "Domain",
+            "value": "{{index .app.metadata.labels "fewlines/topology-domain"}}",
+            "short": true
+          }, {
+            "title": "Cluster",
+            "value": "{{index .app.metadata.labels "fewlines/topology-cluster"}}",
+            "short": true
+          }, {
+            "title": "Environment",
+            "value": "{{index .app.metadata.labels "fewlines/topology-environment"}}",
+            "short": true
+          }, {
+            "title": "Namespace",
+            "value": "{{index .app.metadata.labels "fewlines/topology-namespace"}}",
+            "short": true
+          }
+          ]
+        }]
+
+  - name: platform-sync-unknown
+    title: Service {{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}} sync status is unknown
+    body: |
+      :do_rabzou: Service *{{index .app.metadata.labels "fewlines/topology-domain"}} / {{.app.metadata.name}}* sync status is unknown
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#8E8E8E",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+            },
+            {
+            "title": "Time",
+            "value": "{{.app.status.operationState.finishedAt}}",
+            "short": true
+          }, {
+            "title": "Domain",
+            "value": "{{index .app.metadata.labels "fewlines/topology-domain"}}",
+            "short": true
+          },
+          {
+            "title": "Cluster",
+            "value": "{{index .app.metadata.labels "fewlines/topology-cluster"}}",
+            "short": true
+          }, {
+            "title": "Environment",
+            "value": "{{index .app.metadata.labels "fewlines/topology-environment"}}",
+            "short": true
+          }, {
+            "title": "Namespace",
+            "value": "{{index .app.metadata.labels "fewlines/topology-namespace"}}",
+            "short": true
+          }
+          ]
+        }]
+
+
+triggers:
+  - name: on-health-degraded
+    enabled: true
+    template: platform-sync-degraded
+
+  - name: on-sync-failed
+    enabled: true
+    template: platform-sync-failed
+
+  - name: on-sync-running
+    enabled: true
+    template: platform-sync-running
+
+  - name: on-sync-succeeded
+    enabled: true
+    template: platform-sync-succeeded
+
+  - name: on-sync-status-unknown
+    enabled: true
+    template: platform-sync-unknown
+
+subscriptions:
+  - recipients:
+    - slack:api
+    selector: fewlines/platform-notify=enabled

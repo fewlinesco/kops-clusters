@@ -1,0 +1,162 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  name: {{.cluster_name}}
+spec:
+  additionalPolicies:
+    node: |
+      [
+        {
+          "Effect": "Allow",
+          "Action": "route53:GetChange",
+          "Resource": "arn:aws:route53:::change/*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": ["route53:ChangeResourceRecordSets"],
+          "Resource": ["arn:aws:route53:::hostedzone/{{.cluster_zone_id}}"]
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets"
+          ],
+          "Resource": ["*"]
+        }
+      ]
+  api:
+    loadBalancer:
+      type: Public
+      additionalSecurityGroups: ["{{.k8s_api_http_security_group_id}}"]
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://{{.kops_s3_bucket_name}}/{{.cluster_name}}
+  dnsZone: {{.cluster_name}}
+  etcdClusters:
+  - cpuRequest: 200m
+    etcdMembers:
+    {{range $i, $az := .availability_zones}}
+      - instanceGroup: master-{{.}}
+        name: {{. | replace $.region "" }}
+    {{end}}
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    {{range $i, $az := .availability_zones}}
+      - instanceGroup: master-{{.}}
+        name: {{. | replace $.region "" }}
+    {{end}}
+    memoryRequest: 100Mi
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubelet:
+    anonymousAuth: false
+    authenticationTokenWebhook: true
+    authorizationMode: Webhook
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.17.9
+  masterInternalName: api.internal.{{.cluster_name}}
+  masterPublicName: api.{{.cluster_name}}
+  networkID: {{.vpc_id}}
+  networkCIDR: {{.vpc_cidr_block}}
+  kubeControllerManager:
+    clusterCIDR: {{.vpc_cidr_block}}
+  kubeProxy:
+    clusterCIDR: {{.vpc_cidr_block}}
+  networking:
+    amazonvpc: {}
+    # calico:
+    #   majorVersion: v3
+  nonMasqueradeCIDR: {{.vpc_cidr_block}}
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  {{range $i, $id := .private_subnet_ids}}
+  - id: {{.}}
+    name: {{index $.availability_zones $i}}
+    type: Private
+    zone: {{index $.availability_zones $i}}
+    egress: {{index $.nat_gateway_ids 0}}
+  {{end}}
+  {{range $i, $id := .public_subnet_ids}}
+  - id: {{.}}
+    name: utility-{{index $.availability_zones $i}}
+    type: Utility
+    zone: {{index $.availability_zones $i}}
+  {{end}}
+  topology:
+    bastion:
+      bastionPublicName: bastion.{{.cluster_name}}
+    dns:
+      type: Public
+    masters: private
+    nodes: private
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: {{.cluster_name}}
+  name: bastions
+spec:
+  image: kope.io/k8s-1.17-debian-stretch-amd64-hvm-ebs-2020-07-20
+  machineType: t3.micro
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: bastions
+  role: Bastion
+  subnets:
+  {{range .availability_zones}}
+  - utility-{{.}}
+  {{end}}
+
+---
+
+{{range .availability_zones}}
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: {{$.cluster_name}}
+  name: master-{{.}}
+spec:
+  image: kope.io/k8s-1.17-debian-stretch-amd64-hvm-ebs-2020-07-20
+  machineType: t3.large
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    kops.k8s.io/instancegroup: master-{{.}}
+  role: Master
+  subnets:
+  - {{.}}
+---
+{{ end }}
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: {{.cluster_name}}
+  name: nodes
+spec:
+  image: kope.io/k8s-1.17-debian-stretch-amd64-hvm-ebs-2020-07-20
+  machineType: m5.large
+  maxSize: 3
+  minSize: 3
+  nodeLabels:
+    kops.k8s.io/instancegroup: nodes
+  role: Node
+  subnets:
+  {{range .availability_zones}}
+  - {{.}}
+  {{end}}

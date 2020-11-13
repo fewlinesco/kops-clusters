@@ -1,0 +1,5 @@
+envoy:
+  hostPorts:
+    http: 9999
+  service:
+    type: NodePort

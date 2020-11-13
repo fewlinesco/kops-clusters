@@ -1,0 +1,30 @@
+version: '3'
+
+vars:
+  TF_OUTPUT:
+    sh: cd infrastructure && terraform output -json
+  STATE:
+    sh: echo "s3://$(echo '{{.TF_OUTPUT}}' | jq -r .kops_s3_bucket_name.value)"
+
+tasks:
+  template:
+    dir: clusters
+    cmds:
+      - ./template.sh '{{.TF_OUTPUT}}'
+
+  update-state:
+    dir: clusters
+    cmds:
+      - ./update-state.sh {{.STATE}}
+
+  deploy:
+    dir: clusters/terraform
+    cmds:
+      - terraform init
+      - terraform apply --auto-approve
+
+  all:
+    cmds:
+      - task: template
+      - task: update-state
+      - task: deploy

@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  init:
+    cmds:
+      - cd infrastructure && terraform init
+
+  update:
+    deps:
+      - init
+    cmds:
+      - cd infrastructure && terraform apply --auto-approve
+
+  all:
+    cmds:
+      - task: init
+      - task: update

@@ -24,11 +24,6 @@ variable "public_subnets" {
   description = "public subnets list"
 }
 
-variable "ingress_ips" {
-  type        = list
-  description = "List of Ingress IPs"
-}
-
 variable "cluster_name" {
   type        = string
   description = "FQDN cluster name"

@@ -113,6 +113,7 @@ provider "aws" {
 Run the following commands:
 
 ```
+set -euo pipefail
 export CLUSTER_NAME=<cluster name>
 task cluster:deploy
 kops delete cluster --unregister --yes $CLUSTER_NAME
@@ -127,3 +128,7 @@ If it complains that the Zone is not empty, delete the cluster API record from t
 ```
 task update
 ```
+
+## TODO
+
+[] - Move temporary files to TMP instead of `cluster` directory, with random names at each execution

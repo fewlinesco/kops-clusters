@@ -29,4 +29,3 @@ output "default_security_group_id" {
 output "nat_gateway_ids" {
   value = module.vpc.natgw_ids
 }
-

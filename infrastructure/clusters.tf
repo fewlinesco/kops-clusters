@@ -2,18 +2,18 @@
 # CLUSTERS DEFINITIONS
 ############################
 
-module "test_cluster" {
+module "example_cluster" {
   source = "./modules/cluster-environment"
 
   providers       = {
-    aws = aws.eu_west_1
+    aws = aws.eu_west_3
   }
 
-  env_code      = "tst"
+  env_code      = "exp"
   number        = "01"
   provider_code = "aws"
-  region_code   = "irl"
-  aws_region    = "eu-west-1"
+  region_code   = "par"
+  aws_region    = "eu-west-3"
 }
 
 #################################
@@ -22,6 +22,17 @@ module "test_cluster" {
 
 locals {
   cluster_envs = {
-    "test" = module.test_cluster,
+    "example_cluster" = module.example_cluster,
   }
+}
+
+#################################
+# PERSISTENCE PEERINGS
+#################################
+
+module "example_peering" {
+  source          = "../terraform-modules/vpc-peering"
+
+  requestor_vpc_id =  module.example_cluster.vpc_id
+  acceptor_vpc_id = module.example_persistence_vpc.vpc_id
 }

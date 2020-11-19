@@ -8,3 +8,8 @@ output "cluster_envs" {
     for e in keys(local.cluster_envs) : lookup(local.cluster_envs, e)
   ]
 }
+
+output "rds_password" {
+  description = "TODO: REMOVE IT FROM OUTPUT"
+  value       = module.master.this_db_instance_password
+}

@@ -2,6 +2,16 @@
   "module": {
     "exp-01_aws-par_fewlines_net": {
       "source": "./kops-output/exp-01.aws-par.fewlines.net"
+    },
+    "exp-01_aws-par_fewlines_net_services": {
+      "source": "./modules/support-services",
+      "providers": {
+        "aws": "aws.eu-west-3"
+      },
+      "region": "eu-west-3",
+      "cluster_name": "exp-01.aws-par.fewlines.net",
+      "main_zone": "fewlines.net",
+      "cluster_zone_id": "Z06323902UT237PH5YKOG"
     }
   }
 }

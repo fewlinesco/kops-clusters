@@ -1,7 +1,5 @@
 {
   "module": {
-    "exp-01_aws-par_fewlines_net": {
-      "source": "./kops-output/exp-01.aws-par.fewlines.net"
-    }
+
   }
 }

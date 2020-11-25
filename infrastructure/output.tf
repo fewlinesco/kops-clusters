@@ -9,7 +9,7 @@ output "cluster_envs" {
   ]
 }
 
-output "rds_password" {
-  description = "TODO: REMOVE IT FROM OUTPUT"
-  value       = module.master.this_db_instance_password
-}
+# output "rds_password" {
+#   description = "TODO: REMOVE IT FROM OUTPUT"
+#   value       = module.master.this_db_instance_password
+# }

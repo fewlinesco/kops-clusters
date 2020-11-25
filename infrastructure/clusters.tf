@@ -30,9 +30,9 @@ locals {
 # PERSISTENCE PEERINGS
 #################################
 
-module "example_peering" {
-  source          = "../terraform-modules/vpc-peering"
+# module "example_peering" {
+#   source          = "../terraform-modules/vpc-peering"
 
-  requestor_vpc_id =  module.example_cluster.vpc_id
-  acceptor_vpc_id = module.example_persistence_vpc.vpc_id
-}
+#   requestor_vpc_id =  module.example_cluster.vpc_id
+#   acceptor_vpc_id = module.example_persistence_vpc.vpc_id
+# }
